@@ -113,13 +113,14 @@ const Index = () => {
     toast.success('🎨 Generating stunning food images...');
 
     try {
-      const updatedDishes = [...dishes];
-      
-      // Mark all dishes as generating
-      updatedDishes.forEach(dish => dish.isGeneratingImage = true);
+      // Start with dishes marked as generating, but show them immediately
+      const updatedDishes = dishes.map(dish => ({
+        ...dish,
+        isGeneratingImage: true
+      }));
       setGeneratedDishes([...updatedDishes]);
 
-      // Generate images for each dish
+      // Generate images for each dish sequentially
       for (let i = 0; i < updatedDishes.length; i++) {
         const dish = updatedDishes[i];
         
@@ -141,23 +142,34 @@ const Index = () => {
             const data = await response.json();
             if (data.success && data.imageUrl) {
               updatedDishes[i].imageUrl = data.imageUrl;
-              toast.success(`✨ Generated image for ${dish.name}!`);
+              updatedDishes[i].isGeneratingImage = false;
+              
+              // Update state immediately to show this completed dish
+              setGeneratedDishes([...updatedDishes]);
+              
+              toast.success(`✨ ${dish.name} is ready!`);
+              
+              // Small delay for visual effect
+              await new Promise(resolve => setTimeout(resolve, 300));
             } else {
               toast.error(`Failed to generate image for ${dish.name}`);
+              updatedDishes[i].isGeneratingImage = false;
+              setGeneratedDishes([...updatedDishes]);
             }
           } else {
             toast.error(`Failed to generate image for ${dish.name}`);
+            updatedDishes[i].isGeneratingImage = false;
+            setGeneratedDishes([...updatedDishes]);
           }
         } catch (error) {
           console.error(`Error generating image for ${dish.name}:`, error);
           toast.error(`Failed to generate image for ${dish.name}`);
+          updatedDishes[i].isGeneratingImage = false;
+          setGeneratedDishes([...updatedDishes]);
         }
-        
-        updatedDishes[i].isGeneratingImage = false;
-        setGeneratedDishes([...updatedDishes]);
       }
 
-      toast.success('🎉 All images generated successfully!');
+      toast.success('🎉 All dishes are ready to serve!');
     } catch (error) {
       console.error('Error generating images:', error);
       toast.error('Failed to generate images');

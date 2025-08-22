@@ -126,7 +126,13 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
               </thead>
               <tbody>
                 {dishes.map((dish, index) => (
-                <tr key={`${dish.name}-${index}`} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
+                <tr 
+                  key={`${dish.name}-${index}`} 
+                  className={`border-b border-border/30 hover:bg-muted/20 transition-all duration-300 ${
+                    dish.imageUrl ? 'animate-fade-in' : 'opacity-70'
+                  }`}
+                  style={{ animationDelay: `${index * 0.15}s` }}
+                >
                   <td className="py-4 px-4 text-muted-foreground font-mono">
                     {String(index + 1).padStart(2, '0')}
                   </td>
@@ -138,8 +144,12 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                           <img
                             src={dish.imageUrl}
                             alt={dish.name}
-                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                            className="w-16 h-16 object-cover rounded-lg shadow-sm animate-scale-in"
                           />
+                        ) : dish.isGeneratingImage ? (
+                          <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
+                            <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                          </div>
                         ) : (
                           <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
                             🍽️
@@ -221,14 +231,19 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
               {dishes.map((dish, index) => (
             <Card 
               key={`${dish.name}-${index}`} 
-              className="gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className={`gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden ${
+                dish.imageUrl ? 'animate-scale-in' : ''
+              }`}
+              style={{ 
+                animationDelay: `${index * 0.1}s`,
+                opacity: dish.imageUrl ? 1 : 0.7
+              }}
             >
               <div className="p-6 space-y-4">
                 {/* Image Section */}
                 <div className="text-center">
                   {dish.imageUrl ? (
-                    <div className="relative">
+                    <div className="relative animate-scale-in">
                       <img
                         src={dish.imageUrl}
                         alt={dish.name}
@@ -238,17 +253,23 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                         variant="outline"
                         size="sm"
                         onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
-                        className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm"
+                        className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm hover-scale"
                       >
                         <Download className="h-4 w-4" />
                       </Button>
+                      <div className="absolute bottom-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-fade-in">
+                        ✨ Ready!
+                      </div>
                     </div>
                   ) : (
-                    <div className="w-full aspect-square bg-muted rounded-lg mb-4 flex flex-col items-center justify-center">
+                    <div className="w-full aspect-square bg-muted rounded-lg mb-4 flex flex-col items-center justify-center relative">
                       {dish.isGeneratingImage ? (
                         <>
                           <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mb-2" />
-                          <span className="text-sm text-muted-foreground">Generating...</span>
+                          <span className="text-sm text-muted-foreground animate-pulse">Creating magic...</span>
+                          <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                            🎨 Generating
+                          </div>
                         </>
                       ) : (
                         <>
@@ -258,7 +279,7 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                               variant="outline"
                               size="sm"
                               onClick={() => onGenerateImage(index)}
-                              className="mt-2"
+                              className="mt-2 hover-scale"
                             >
                               <Camera className="h-4 w-4 mr-2" />
                               Generate Image
