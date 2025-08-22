@@ -33,7 +33,7 @@ serve(async (req) => {
     const messages = [
       { 
         role: 'system', 
-        content: 'You are a menu analysis expert. Analyze restaurant menu images and extract dish information as JSON. Always respond with valid JSON in the exact format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}'
+        content: 'You are a multilingual menu analysis expert. Analyze restaurant menu images in any language (including Russian, English, and others) and extract dish information as JSON. Preserve original dish names in their original language. For descriptions, provide them in the same language as the menu. Always respond with valid JSON in the exact format: {"success": true, "dishes": [{"name": "dish name in original language", "description": "description in original language or empty string"}]}'
       }
     ];
 

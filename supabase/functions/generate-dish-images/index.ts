@@ -48,8 +48,21 @@ serve(async (req) => {
       );
     }
 
-    // Create an optimized prompt for food photography
-    const foodPrompt = `Professional food photography of ${body.name}: ${body.description}. Beautifully plated on elegant dishware, soft professional lighting, appetizing presentation, high-end restaurant quality, macro photography, food styling, warm ambient lighting, shallow depth of field`;
+    // Create an optimized prompt for food photography with language detection
+    // If the dish name contains Cyrillic characters, add English translation context
+    const containsCyrillic = /[\u0400-\u04FF]/.test(body.name + " " + body.description);
+    
+    let foodPrompt = `Professional food photography of ${body.name}`;
+    if (body.description) {
+      foodPrompt += `: ${body.description}`;
+    }
+    
+    // For Russian/Cyrillic dishes, add English context for better image generation
+    if (containsCyrillic) {
+      foodPrompt += ` (Russian cuisine dish)`;
+    }
+    
+    foodPrompt += `. Beautifully plated on elegant dishware, soft professional lighting, appetizing presentation, high-end restaurant quality, macro photography, food styling, warm ambient lighting, shallow depth of field`;
 
     console.log("Generating image with prompt:", foodPrompt);
 

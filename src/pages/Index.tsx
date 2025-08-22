@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuUpload } from '@/components/MenuUpload';
 import { GeneratedDishes } from '@/components/GeneratedDishes';
@@ -13,11 +13,64 @@ interface GeneratedDish {
   isGeneratingImage?: boolean;
 }
 
+// Language detection and localization
+const detectLanguage = (dishes: GeneratedDish[]): 'ru' | 'en' => {
+  const text = dishes.map(dish => `${dish.name} ${dish.description}`).join(' ');
+  return /[\u0400-\u04FF]/.test(text) ? 'ru' : 'en';
+};
+
+const translations = {
+  en: {
+    heroTitle: 'Turn Menus into Magic',
+    heroSubtitle: 'Upload any menu and watch as AI transforms each dish into stunning, mouth-watering visuals. ✨🍴',
+    uploadTitle: 'Upload Your Menu',
+    uploadSubtitle: 'Drag and drop your menu image, and let our AI work its magic',
+    generateButton: 'Generate Magic ✨',
+    analyzing: 'Analyzing Menu...',
+    generatingImages: 'Generating Images...',
+    whyChooseTitle: 'Why Choose Menu Magic?',
+    whyChooseSubtitle: 'Transform your restaurant\'s visual appeal with AI-powered food photography',
+    uploadFirst: 'Please upload a menu first',
+    analyzing_toast: '✨ AI is analyzing your menu...',
+    dish_ready: (name: string) => `✨ ${name} is ready!`,
+    all_ready: '🎉 All dishes are ready to serve!',
+    some_ready: (successful: number, total: number) => `✨ ${successful}/${total} images generated successfully!`,
+    failed_generate: (name: string) => `Failed to generate image for ${name}`,
+    ai_powered: 'AI-Powered',
+    professional_quality: 'Professional Quality',
+    instant_results: 'Instant Results'
+  },
+  ru: {
+    heroTitle: 'Превратите меню в магию',
+    heroSubtitle: 'Загрузите любое меню и наблюдайте, как ИИ превращает каждое блюдо в потрясающие, аппетитные изображения. ✨🍴',
+    uploadTitle: 'Загрузите ваше меню',
+    uploadSubtitle: 'Перетащите изображение меню, и пусть наш ИИ творит чудеса',
+    generateButton: 'Создать магию ✨',
+    analyzing: 'Анализируем меню...',
+    generatingImages: 'Создаём изображения...',
+    whyChooseTitle: 'Почему Menu Magic?',
+    whyChooseSubtitle: 'Преобразите визуальную привлекательность вашего ресторана с помощью фотографии блюд на основе ИИ',
+    uploadFirst: 'Пожалуйста, сначала загрузите меню',
+    analyzing_toast: '✨ ИИ анализирует ваше меню...',
+    dish_ready: (name: string) => `✨ ${name} готово!`,
+    all_ready: '🎉 Все блюда готовы к подаче!',
+    some_ready: (successful: number, total: number) => `✨ ${successful}/${total} изображений создано успешно!`,
+    failed_generate: (name: string) => `Не удалось создать изображение для ${name}`,
+    ai_powered: 'На основе ИИ',
+    professional_quality: 'Профессиональное качество',
+    instant_results: 'Мгновенные результаты'
+  }
+};
+
 const Index = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [generatedDishes, setGeneratedDishes] = useState<GeneratedDish[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
+
+  // Detect language based on generated dishes
+  const language = useMemo(() => detectLanguage(generatedDishes), [generatedDishes]);
+  const t = translations[language];
 
   // Remove unused imports and mock data since we're using real AI analysis now
 
@@ -33,12 +86,12 @@ const Index = () => {
 
   const handleGenerateMagic = async () => {
     if (!uploadedFile) {
-      toast.error('Please upload a menu first');
+      toast.error(t.uploadFirst);
       return;
     }
 
     setIsGenerating(true);
-    toast.success('✨ AI is analyzing your menu...');
+    toast.success(t.analyzing_toast);
 
     try {
       // Resize image to reduce processing time
@@ -145,7 +198,7 @@ const Index = () => {
               // Update state immediately to show this completed dish
               setGeneratedDishes([...updatedDishes]);
               
-              toast.success(`✨ ${dish.name} is ready!`);
+              toast.success(t.dish_ready(dish.name));
               return { success: true, dish: dish.name };
             }
           }
@@ -159,7 +212,7 @@ const Index = () => {
           console.error(`Error generating image for ${dish.name}:`, error);
           updatedDishes[index].isGeneratingImage = false;
           setGeneratedDishes([...updatedDishes]);
-          toast.error(`Failed to generate image for ${dish.name}`);
+          toast.error(t.failed_generate(dish.name));
           return { success: false, dish: dish.name };
         }
       });
@@ -169,9 +222,9 @@ const Index = () => {
       const successful = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
       
       if (successful === dishes.length) {
-        toast.success('🎉 All dishes are ready to serve!');
+        toast.success(t.all_ready);
       } else {
-        toast.success(`✨ ${successful}/${dishes.length} images generated successfully!`);
+        toast.success(t.some_ready(successful, dishes.length));
       }
       
     } catch (error) {
@@ -222,7 +275,7 @@ const Index = () => {
               updatedDishes[i].imageUrl = data.imageUrl;
               toast.success(`✨ Generated image for ${dish.name}!`);
             } else {
-              toast.error(`Failed to generate image for ${dish.name}`);
+          toast.error(t.failed_generate(dish.name));
             }
           } else {
             toast.error(`Failed to generate image for ${dish.name}`);
@@ -301,14 +354,14 @@ const Index = () => {
             <ChefHat className="h-16 w-16 text-white mx-auto mb-6" />
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Turn Menus into{' '}
+            {t.heroTitle.split(' Magic')[0]}{' '}
             <span className="relative">
-              Magic
+              {language === 'ru' ? 'магию' : 'Magic'}
               <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-pulse" />
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Upload any menu and watch as AI transforms each dish into stunning, mouth-watering visuals. ✨🍴
+            {t.heroSubtitle}
           </p>
         </div>
       </section>
@@ -318,10 +371,10 @@ const Index = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-primary mb-4">
-              Upload Your Menu
+              {t.uploadTitle}
             </h2>
             <p className="text-muted-foreground text-lg">
-              Drag and drop your menu image, and let our AI work its magic
+              {t.uploadSubtitle}
             </p>
           </div>
 
@@ -343,17 +396,17 @@ const Index = () => {
                 {isGenerating ? (
                   <>
                     <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-                    Analyzing Menu...
+                    {t.analyzing}
                   </>
                 ) : isGeneratingImages ? (
                   <>
                     <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-                    Generating Images...
+                    {t.generatingImages}
                   </>
                 ) : (
                   <>
                     <Wand2 className="h-5 w-5" />
-                    Generate Magic ✨
+                    {t.generateButton}
                   </>
                 )}
               </Button>
@@ -378,10 +431,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-primary mb-4">
-              Why Choose Menu Magic?
+              {t.whyChooseTitle}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Transform your restaurant's visual appeal with AI-powered food photography
+              {t.whyChooseSubtitle}
             </p>
           </div>
 
@@ -390,9 +443,9 @@ const Index = () => {
               <div className="gradient-primary rounded-full p-3 w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold text-lg text-primary mb-2">AI-Powered</h3>
+              <h3 className="font-semibold text-lg text-primary mb-2">{t.ai_powered}</h3>
               <p className="text-muted-foreground">
-                Advanced AI analyzes your menu and creates stunning visuals for every dish
+                {language === 'ru' ? 'Передовой ИИ анализирует ваше меню и создает потрясающие изображения для каждого блюда' : 'Advanced AI analyzes your menu and creates stunning visuals for every dish'}
               </p>
             </div>
 
@@ -400,9 +453,9 @@ const Index = () => {
               <div className="gradient-primary rounded-full p-3 w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Camera className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold text-lg text-primary mb-2">Professional Quality</h3>
+              <h3 className="font-semibold text-lg text-primary mb-2">{t.professional_quality}</h3>
               <p className="text-muted-foreground">
-                Restaurant-quality food photography that makes every dish irresistible
+                {language === 'ru' ? 'Фотография блюд ресторанного качества, которая делает каждое блюдо неотразимым' : 'Restaurant-quality food photography that makes every dish irresistible'}
               </p>
             </div>
 
@@ -410,9 +463,9 @@ const Index = () => {
               <div className="gradient-primary rounded-full p-3 w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Wand2 className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold text-lg text-primary mb-2">Instant Results</h3>
+              <h3 className="font-semibold text-lg text-primary mb-2">{t.instant_results}</h3>
               <p className="text-muted-foreground">
-                Get beautiful dish images in seconds, ready for your website or social media
+                {language === 'ru' ? 'Получайте красивые изображения блюд за секунды, готовые для вашего сайта или социальных сетей' : 'Get beautiful dish images in seconds, ready for your website or social media'}
               </p>
             </div>
           </div>
