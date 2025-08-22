@@ -152,7 +152,7 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
         
         <div className="space-y-2">
           <p className="text-xl font-semibold text-primary">
-            {language === 'ru' ? 'Нажмите для загрузки или перетащите файл' : 'Click to upload or drag and drop'}
+            {language === 'ru' ? 'Сделайте фото, загрузите или перетащите файл' : 'Take a photo, upload or drag and drop'}
           </p>
           <p className="text-muted-foreground">
             PNG, JPG, GIF {language === 'ru' ? 'до 10МБ' : 'up to 10MB'}
