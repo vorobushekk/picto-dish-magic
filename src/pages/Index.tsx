@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { MenuUpload } from '@/components/MenuUpload';
 import { GeneratedDishes } from '@/components/GeneratedDishes';
-import { Sparkles, Wand2, ChefHat, Camera } from 'lucide-react';
+import { Sparkles, Wand2, ChefHat, Camera, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-food.jpg';
 
@@ -67,10 +67,18 @@ const Index = () => {
   const [generatedDishes, setGeneratedDishes] = useState<GeneratedDish[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
+  const [manualLanguage, setManualLanguage] = useState<'ru' | 'en' | null>(null);
 
-  // Detect language based on generated dishes
-  const language = useMemo(() => detectLanguage(generatedDishes), [generatedDishes]);
+  // Use manual language selection or auto-detect based on generated dishes
+  const language = useMemo(() => {
+    return manualLanguage || detectLanguage(generatedDishes);
+  }, [manualLanguage, generatedDishes]);
+  
   const t = translations[language];
+
+  const toggleLanguage = () => {
+    setManualLanguage(language === 'en' ? 'ru' : 'en');
+  };
 
   // Remove unused imports and mock data since we're using real AI analysis now
 
@@ -342,6 +350,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Language Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleLanguage}
+          className="bg-white/90 backdrop-blur-sm hover:bg-white border-white/20 shadow-lg"
+        >
+          <Globe className="h-4 w-4 mr-2" />
+          {language === 'en' ? 'RU' : 'EN'}
+        </Button>
+      </div>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-90" />
