@@ -63,7 +63,7 @@ const Index = () => {
 
       const optimizedImage = await resizeImage(uploadedFile);
       
-      const prompt = `Analyze this restaurant menu image and extract all dish information. For each dish, identify the name and description. Return the data as a JSON array with objects containing 'name' and 'description' fields. Focus only on actual food items, ignore prices, categories, and restaurant info. If a dish has no description, use an empty string.`;
+      const prompt = `Analyze this restaurant menu image and extract all dish information. For each dish, identify the name and description. Return the data as a JSON array with objects containing 'name' and 'description' fields. Focus only on actual food items, ignore prices, categories, restaurant info, and drinks/beverages. If a dish has no description, use an empty string.`;
 
       try {
         const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/openai-chat', {
