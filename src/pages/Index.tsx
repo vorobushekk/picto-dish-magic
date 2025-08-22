@@ -51,7 +51,9 @@ Please analyze the uploaded menu image: ${base64Image}`;
           const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/openai-chat', {
             method: 'POST',
             headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo`,
               'Content-Type': 'application/json',
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo'
             },
             body: JSON.stringify({ prompt }),
           });
