@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, CloudUpload, X } from 'lucide-react';
+import { Upload, CloudUpload, X, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 
 interface MenuUploadProps {
   onUpload: (file: File) => void;
@@ -51,6 +53,36 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
       }
       onUpload(file);
       toast.success('Menu uploaded successfully!');
+    }
+  }, [onUpload]);
+
+  const handleCameraCapture = useCallback(async () => {
+    try {
+      if (!Capacitor.isNativePlatform()) {
+        // Fallback to file input on web
+        document.getElementById('menu-upload')?.click();
+        return;
+      }
+
+      const image = await CapacitorCamera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+      });
+
+      if (image.webPath) {
+        // Convert the image to a File object
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+        
+        onUpload(file);
+        toast.success('Photo captured successfully!');
+      }
+    } catch (error) {
+      console.error('Camera capture error:', error);
+      toast.error('Failed to capture photo. Please try uploading a file instead.');
     }
   }, [onUpload]);
 
@@ -132,14 +164,27 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
             className="hidden"
             id="menu-upload"
           />
-          <label htmlFor="menu-upload">
-            <Button variant="hero" size="lg" className="cursor-pointer" asChild>
-              <span>
-                <Upload className="h-5 w-5" />
-                Choose File
-              </span>
+          
+          <div className="flex gap-3 justify-center flex-wrap">
+            <label htmlFor="menu-upload">
+              <Button variant="hero" size="lg" className="cursor-pointer" asChild>
+                <span>
+                  <Upload className="h-5 w-5" />
+                  Choose File
+                </span>
+              </Button>
+            </label>
+            
+            <Button 
+              variant="secondary" 
+              size="lg" 
+              onClick={handleCameraCapture}
+              className="shadow-card hover:shadow-primary"
+            >
+              <Camera className="h-5 w-5" />
+              Take Photo
             </Button>
-          </label>
+          </div>
         </div>
       </div>
     </div>
