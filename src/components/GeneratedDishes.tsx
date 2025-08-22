@@ -98,39 +98,43 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left py-3 px-4 font-semibold text-primary">#</th>
-                  <th className="text-left py-3 px-4 font-semibold text-primary">Dish Name</th>
-                  <th className="text-left py-3 px-4 font-semibold text-primary">Description</th>
+                  <th className="text-left py-3 px-4 font-semibold text-primary">Dish Information</th>
                   <th className="text-center py-3 px-4 font-semibold text-primary">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {dishes.map((dish, index) => (
-                  <tr 
-                    key={`${dish.name}-${index}`}
-                    className="border-b border-border/50 hover:bg-muted/30 transition-colors"
-                  >
-                    <td className="py-4 px-4 text-muted-foreground font-mono">
-                      {String(index + 1).padStart(2, '0')}
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="font-semibold text-primary">{dish.name}</div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="text-muted-foreground text-sm max-w-md">
-                        {dish.description || "No description available"}
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleShare(dish.name)}
-                        className="text-muted-foreground hover:text-primary"
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={`${dish.name}-${index}`}>
+                    {/* Dish Name Row */}
+                    <tr className="border-b border-border/30 hover:bg-muted/20 transition-colors">
+                      <td className="py-3 px-4 text-muted-foreground font-mono" rowSpan={2}>
+                        {String(index + 1).padStart(2, '0')}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-semibold text-primary text-lg">
+                          🍽️ {dish.name}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center" rowSpan={2}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleShare(dish.name)}
+                          className="text-muted-foreground hover:text-primary"
+                        >
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                    {/* Description Row */}
+                    <tr className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+                      <td className="py-3 px-4 pl-8">
+                        <div className="text-muted-foreground text-sm italic">
+                          {dish.description ? `"${dish.description}"` : "No description available"}
+                        </div>
+                      </td>
+                    </tr>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
