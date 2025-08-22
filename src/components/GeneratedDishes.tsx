@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Share2 } from 'lucide-react';
+import { Share2, Table, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -15,6 +15,7 @@ interface GeneratedDishesProps {
 }
 
 export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading }) => {
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   const handleShare = (dishName: string) => {
     if (navigator.share) {
@@ -67,43 +68,122 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
         <p className="text-muted-foreground mt-2">
           {dishes.length} {dishes.length === 1 ? 'dish' : 'dishes'} found on your menu
         </p>
+        
+        {/* View Toggle */}
+        <div className="flex justify-center gap-2 mt-4">
+          <Button
+            variant={viewMode === 'cards' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('cards')}
+          >
+            <Grid className="h-4 w-4 mr-2" />
+            Cards
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('table')}
+          >
+            <Table className="h-4 w-4 mr-2" />
+            Table
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {dishes.map((dish, index) => (
-          <Card 
-            key={`${dish.name}-${index}`} 
-            className="gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <div className="p-6 space-y-4">
-              <div className="text-center">
-                <div className="gradient-primary rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🍽️</span>
-                </div>
-                <h3 className="font-semibold text-xl text-primary mb-2">
-                  {dish.name}
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  {dish.description || "Delicious dish from your menu"}
-                </p>
-              </div>
-              
-              <div className="flex items-center justify-center pt-4">
-                <Button
-                  variant="hero"
-                  size="sm"
-                  onClick={() => handleShare(dish.name)}
-                  className="w-full"
-                >
-                  <Share2 className="h-4 w-4" />
-                  Share Dish
-                </Button>
-              </div>
+      {viewMode === 'table' ? (
+        // Table View
+        <div className="gradient-card rounded-xl p-6 shadow-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 font-semibold text-primary">#</th>
+                  <th className="text-left py-3 px-4 font-semibold text-primary">Dish Name</th>
+                  <th className="text-left py-3 px-4 font-semibold text-primary">Description</th>
+                  <th className="text-center py-3 px-4 font-semibold text-primary">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dishes.map((dish, index) => (
+                  <tr 
+                    key={`${dish.name}-${index}`}
+                    className="border-b border-border/50 hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="py-4 px-4 text-muted-foreground font-mono">
+                      {String(index + 1).padStart(2, '0')}
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="font-semibold text-primary">{dish.name}</div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="text-muted-foreground text-sm max-w-md">
+                        {dish.description || "No description available"}
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleShare(dish.name)}
+                        className="text-muted-foreground hover:text-primary"
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Table Summary */}
+          <div className="mt-6 pt-4 border-t border-border/50">
+            <div className="flex justify-between items-center text-sm text-muted-foreground">
+              <span>Total dishes: {dishes.length}</span>
+              <span>
+                Dishes with descriptions: {dishes.filter(d => d.description && d.description.trim()).length}
+              </span>
             </div>
-          </Card>
-        ))}
-      </div>
+          </div>
+        </div>
+      ) : (
+        // Cards View (existing)
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {dishes.map((dish, index) => (
+            <Card 
+              key={`${dish.name}-${index}`} 
+              className="gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="p-6 space-y-4">
+                <div className="text-center">
+                  <div className="gradient-primary rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <span className="text-2xl">🍽️</span>
+                  </div>
+                  <h3 className="font-semibold text-xl text-primary mb-2">
+                    {dish.name}
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    {dish.description || "Delicious dish from your menu"}
+                  </p>
+                </div>
+                
+                <div className="flex items-center justify-center pt-4">
+                  <Button
+                    variant="hero"
+                    size="sm"
+                    onClick={() => handleShare(dish.name)}
+                    className="w-full"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    Share Dish
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
