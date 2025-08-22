@@ -15,7 +15,7 @@ interface GeneratedDishesProps {
 }
 
 export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading }) => {
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   const handleShare = (dishName: string) => {
     if (navigator.share) {
