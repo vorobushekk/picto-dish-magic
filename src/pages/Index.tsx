@@ -88,7 +88,10 @@ const Index = () => {
         // Parse the dishes from the AI response
         if (data.success && data.dishes) {
           setGeneratedDishes(data.dishes);
-          toast.success(`🎉 Magic complete! Found ${data.dishes.length} dishes!`);
+          toast.success(`🎉 Found ${data.dishes.length} dishes! Now generating images...`);
+          
+          // Automatically generate images for all dishes
+          await generateImagesForDishes(data.dishes);
         } else {
           throw new Error('Invalid response format');
         }
@@ -102,6 +105,64 @@ const Index = () => {
       console.error('Error processing file:', error);
       toast.error('Failed to process the uploaded file');
       setIsGenerating(false);
+    }
+  };
+
+  const generateImagesForDishes = async (dishes: GeneratedDish[]) => {
+    setIsGeneratingImages(true);
+    toast.success('🎨 Generating stunning food images...');
+
+    try {
+      const updatedDishes = [...dishes];
+      
+      // Mark all dishes as generating
+      updatedDishes.forEach(dish => dish.isGeneratingImage = true);
+      setGeneratedDishes([...updatedDishes]);
+
+      // Generate images for each dish
+      for (let i = 0; i < updatedDishes.length; i++) {
+        const dish = updatedDishes[i];
+        
+        try {
+          const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/generate-dish-images', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo`,
+              'Content-Type': 'application/json',
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo'
+            },
+            body: JSON.stringify({ 
+              name: dish.name,
+              description: dish.description || 'Delicious dish'
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.imageUrl) {
+              updatedDishes[i].imageUrl = data.imageUrl;
+              toast.success(`✨ Generated image for ${dish.name}!`);
+            } else {
+              toast.error(`Failed to generate image for ${dish.name}`);
+            }
+          } else {
+            toast.error(`Failed to generate image for ${dish.name}`);
+          }
+        } catch (error) {
+          console.error(`Error generating image for ${dish.name}:`, error);
+          toast.error(`Failed to generate image for ${dish.name}`);
+        }
+        
+        updatedDishes[i].isGeneratingImage = false;
+        setGeneratedDishes([...updatedDishes]);
+      }
+
+      toast.success('🎉 All images generated successfully!');
+    } catch (error) {
+      console.error('Error generating images:', error);
+      toast.error('Failed to generate images');
+    } finally {
+      setIsGeneratingImages(false);
     }
   };
 
@@ -260,41 +321,23 @@ const Index = () => {
                 variant="magic"
                 size="xl"
                 onClick={handleGenerateMagic}
-                disabled={isGenerating}
+                disabled={isGenerating || isGeneratingImages}
                 className="shadow-glow"
               >
                 {isGenerating ? (
                   <>
                     <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-                    Generating Magic...
+                    Analyzing Menu...
                   </>
-                ) : (
-                  <>
-                    <Wand2 className="h-5 w-5" />
-                    Generate Magic ✨
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-          {generatedDishes.length > 0 && (
-            <div className="text-center mt-6">
-              <Button
-                variant="hero"
-                size="lg"
-                onClick={handleGenerateImages}
-                disabled={isGeneratingImages}
-                className="shadow-glow"
-              >
-                {isGeneratingImages ? (
+                ) : isGeneratingImages ? (
                   <>
                     <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
                     Generating Images...
                   </>
                 ) : (
                   <>
-                    <Camera className="h-5 w-5" />
-                    Generate All Images ✨
+                    <Wand2 className="h-5 w-5" />
+                    Generate Magic ✨
                   </>
                 )}
               </Button>
