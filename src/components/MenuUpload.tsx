@@ -130,7 +130,7 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
   return (
     <div
       className={cn(
-        "relative gradient-card rounded-xl p-8 border-2 border-dashed transition-all duration-300 shadow-card hover:shadow-primary",
+        "relative gradient-card rounded-xl p-8 border-2 border-dashed transition-all duration-300 shadow-card",
         isDragging ? "border-primary bg-primary/5 scale-105" : "border-muted"
       )}
       onDragOver={handleDragOver}
