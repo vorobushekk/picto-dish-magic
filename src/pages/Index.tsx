@@ -383,7 +383,7 @@ const Index = () => {
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             {t.heroTitle.split(' Magic')[0]}{' '}
             <span className="relative">
-              {language === 'ru' ? 'магию' : 'Magic'}
+              {language === 'ru' ? 'меню' : 'Magic'}
               <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-pulse" />
             </span>
           </h1>
