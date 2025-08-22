@@ -38,49 +38,63 @@ const Index = () => {
     toast.success('✨ AI is analyzing your menu...');
 
     try {
-      // Convert image to base64
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Image = reader.result as string;
-        
-        const prompt = `Analyze this restaurant menu image and extract all dish information. For each dish, identify the name and description. Return the data as a JSON array with objects containing 'name' and 'description' fields. Focus only on actual food items, ignore prices, categories, and restaurant info. If a dish has no description, use an empty string.`;
-
-        try {
-          const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/openai-chat', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo`,
-              'Content-Type': 'application/json',
-              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo'
-            },
-            body: JSON.stringify({ 
-              prompt: prompt,
-              imageData: base64Image 
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to analyze menu');
-          }
-
-          const data = await response.json();
+      // Resize image to reduce processing time
+      const resizeImage = (file: File, maxWidth: number = 1024): Promise<string> => {
+        return new Promise((resolve) => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
           
-          // Parse the dishes from the AI response
-          if (data.success && data.dishes) {
-            setGeneratedDishes(data.dishes);
-            toast.success(`🎉 Magic complete! Found ${data.dishes.length} dishes!`);
-          } else {
-            throw new Error('Invalid response format');
-          }
-        } catch (error) {
-          console.error('Error calling edge function:', error);
-          toast.error('Failed to analyze menu. Please try again.');
-        } finally {
-          setIsGenerating(false);
-        }
+          img.onload = () => {
+            const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+            canvas.width = img.width * ratio;
+            canvas.height = img.height * ratio;
+            
+            ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          
+          img.src = URL.createObjectURL(file);
+        });
       };
+
+      const optimizedImage = await resizeImage(uploadedFile);
       
-      reader.readAsDataURL(uploadedFile);
+      const prompt = `Analyze this restaurant menu image and extract all dish information. For each dish, identify the name and description. Return the data as a JSON array with objects containing 'name' and 'description' fields. Focus only on actual food items, ignore prices, categories, and restaurant info. If a dish has no description, use an empty string.`;
+
+      try {
+        const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/openai-chat', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo`,
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1icnJpemZ4bGloaWd6eXhxYXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MjI0ODMsImV4cCI6MjA3MTM5ODQ4M30.jRg5iCGq_47euABiuEobUBOetoAjkrTx2qyQWVnWIdo'
+          },
+          body: JSON.stringify({ 
+            prompt: prompt,
+            imageData: optimizedImage 
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to analyze menu');
+        }
+
+        const data = await response.json();
+        
+        // Parse the dishes from the AI response
+        if (data.success && data.dishes) {
+          setGeneratedDishes(data.dishes);
+          toast.success(`🎉 Magic complete! Found ${data.dishes.length} dishes!`);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error calling edge function:', error);
+        toast.error('Failed to analyze menu. Please try again.');
+      } finally {
+        setIsGenerating(false);
+      }
     } catch (error) {
       console.error('Error processing file:', error);
       toast.error('Failed to process the uploaded file');
