@@ -39,7 +39,8 @@ const translations = {
     ai_powered: 'AI-Powered',
     professional_quality: 'Professional Quality',
     instant_results: 'Instant Results',
-    footerPhrase: '🍽️ Order with confidence - no more menu regrets! ✨'
+    footerPhrase: '🍽️ Order with confidence - no more menu regrets! ✨',
+    uploadPlaceholder: 'Upload a menu and click "Add Pictures ✨" to see stunning dish visuals here!'
   },
   ru: {
     heroTitle: 'Магия меню',
@@ -60,7 +61,8 @@ const translations = {
     ai_powered: 'На основе ИИ',
     professional_quality: 'Профессиональное качество',
     instant_results: 'Мгновенные результаты',
-    footerPhrase: '🍽️ Заказывайте уверенно - никаких сожалений о выборе! ✨'
+    footerPhrase: '🍽️ Заказывайте уверенно - никаких сожалений о выборе! ✨',
+    uploadPlaceholder: 'Загрузите меню и нажмите "Создать картинки ✨", чтобы увидеть потрясающие изображения блюд!'
   }
 };
 
@@ -447,6 +449,7 @@ const Index = () => {
             dishes={generatedDishes} 
             isLoading={isGenerating}
             onGenerateImage={handleGenerateSingleImage}
+            placeholderText={t.uploadPlaceholder}
           />
         </div>
       </section>

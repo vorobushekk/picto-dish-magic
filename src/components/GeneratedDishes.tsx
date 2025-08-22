@@ -15,9 +15,10 @@ interface GeneratedDishesProps {
   dishes: GeneratedDish[];
   isLoading?: boolean;
   onGenerateImage?: (dishIndex: number) => void;
+  placeholderText?: string;
 }
 
-export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading, onGenerateImage }) => {
+export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading, onGenerateImage, placeholderText }) => {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   const handleShare = (dishName: string) => {
@@ -74,7 +75,7 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
       <div className="text-center py-12">
         <div className="gradient-card rounded-xl p-8 shadow-card">
           <p className="text-muted-foreground text-lg">
-            Upload a menu and click "Generate Magic" to see stunning dish visuals here!
+            {placeholderText || 'Upload a menu and click "Add Pictures ✨" to see stunning dish visuals here!'}
           </p>
         </div>
       </div>
