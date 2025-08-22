@@ -39,7 +39,7 @@ const translations = {
     ai_powered: 'AI-Powered',
     professional_quality: 'Professional Quality',
     instant_results: 'Instant Results',
-    footerPhrase: '🍕 Hungry for code? I cook up digital dishes! 👨‍💻'
+    footerPhrase: '🍽️ Order with confidence - no more menu regrets! ✨'
   },
   ru: {
     heroTitle: 'Магия меню',
@@ -60,7 +60,7 @@ const translations = {
     ai_powered: 'На основе ИИ',
     professional_quality: 'Профессиональное качество',
     instant_results: 'Мгновенные результаты',
-    footerPhrase: '🍕 Голоден до кода? Готовлю цифровые блюда! 👨‍💻'
+    footerPhrase: '🍽️ Заказывайте уверенно - никаких сожалений о выборе! ✨'
   }
 };
 
