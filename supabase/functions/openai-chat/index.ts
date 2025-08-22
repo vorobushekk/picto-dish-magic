@@ -30,7 +30,12 @@ serve(async (req) => {
     console.log('Calling OpenAI with vision prompt for menu analysis');
 
     // Create messages array for vision API
-    const messages = [];
+    const messages = [
+      { 
+        role: 'system', 
+        content: 'You are a menu analysis expert. Always respond with valid JSON only. Return exactly this format: {"dishes": [{"name": "dish name", "description": "description or empty string"}]}. No additional text, no markdown, just the JSON object.'
+      }
+    ];
 
     // If imageData is provided, use vision format
     if (imageData) {
