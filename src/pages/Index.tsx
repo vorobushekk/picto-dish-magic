@@ -5,16 +5,10 @@ import { GeneratedDishes } from '@/components/GeneratedDishes';
 import { Sparkles, Wand2, ChefHat, Camera } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/hero-food.jpg';
-import truffleRisotto from '@/assets/truffle-risotto.jpg';
-import searedSalmon from '@/assets/seared-salmon.jpg';
-import beefWellington from '@/assets/beef-wellington.jpg';
 
 interface GeneratedDish {
-  id: string;
   name: string;
-  imageUrl: string;
   description: string;
-  price: string;
 }
 
 const Index = () => {
@@ -22,30 +16,7 @@ const Index = () => {
   const [generatedDishes, setGeneratedDishes] = useState<GeneratedDish[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Mock dishes for demo - in real app this would come from AI processing
-  const mockDishes: GeneratedDish[] = [
-    {
-      id: '1',
-      name: 'Truffle Risotto',
-      imageUrl: truffleRisotto,
-      description: 'Creamy arborio rice with black truffle shavings and parmesan',
-      price: '$28'
-    },
-    {
-      id: '2',
-      name: 'Seared Salmon',
-      imageUrl: searedSalmon,
-      description: 'Pan-seared Atlantic salmon with lemon herb butter',
-      price: '$32'
-    },
-    {
-      id: '3',
-      name: 'Beef Wellington',
-      imageUrl: beefWellington,
-      description: 'Classic beef tenderloin wrapped in puff pastry',
-      price: '$45'
-    }
-  ];
+  // Remove unused imports and mock data since we're using real AI analysis now
 
   const handleFileUpload = (file: File) => {
     setUploadedFile(file);
@@ -66,12 +37,52 @@ const Index = () => {
     setIsGenerating(true);
     toast.success('✨ AI is analyzing your menu...');
 
-    // Simulate AI processing time
-    setTimeout(() => {
-      setGeneratedDishes(mockDishes);
+    try {
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Image = reader.result as string;
+        
+        const prompt = `Analyze this restaurant menu image and extract all dish information. For each dish, identify the name and description. Return the data as a JSON array with objects containing 'name' and 'description' fields. Focus only on actual food items, ignore prices, categories, and restaurant info. If a dish has no description, use an empty string.
+
+Please analyze the uploaded menu image: ${base64Image}`;
+
+        try {
+          const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/openai-chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to analyze menu');
+          }
+
+          const data = await response.json();
+          
+          // Parse the dishes from the AI response
+          if (data.success && data.dishes) {
+            setGeneratedDishes(data.dishes);
+            toast.success(`🎉 Magic complete! Found ${data.dishes.length} dishes!`);
+          } else {
+            throw new Error('Invalid response format');
+          }
+        } catch (error) {
+          console.error('Error calling edge function:', error);
+          toast.error('Failed to analyze menu. Please try again.');
+        } finally {
+          setIsGenerating(false);
+        }
+      };
+      
+      reader.readAsDataURL(uploadedFile);
+    } catch (error) {
+      console.error('Error processing file:', error);
+      toast.error('Failed to process the uploaded file');
       setIsGenerating(false);
-      toast.success('🎉 Magic complete! Your dishes are ready!');
-    }, 3000);
+    }
   };
 
   return (
