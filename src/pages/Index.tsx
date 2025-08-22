@@ -21,7 +21,7 @@ const detectLanguage = (dishes: GeneratedDish[]): 'ru' | 'en' => {
 
 const translations = {
   en: {
-    heroTitle: 'Can\'t Decide What to Order?',
+    heroTitle: 'Menu Magic',
     heroSubtitle: 'Upload any menu without pictures and get it back with stunning visuals of every dish. Decide what to eat easier! ✨🍴',
     uploadTitle: 'Upload Your Picture-Less Menu',
     uploadSubtitle: 'Transform any text-only menu into a visual feast that helps you choose',
@@ -41,7 +41,7 @@ const translations = {
     instant_results: 'Instant Results'
   },
   ru: {
-    heroTitle: 'Не знаете, что заказать?',
+    heroTitle: 'Магия меню',
     heroSubtitle: 'Загрузите любое меню без картинок и получите его с потрясающими изображениями каждого блюда. Решайте что есть проще! ✨🍴',
     uploadTitle: 'Загрузите ваше меню без картинок',
     uploadSubtitle: 'Превратите любое текстовое меню в визуальный пир, который поможет вам выбрать',
