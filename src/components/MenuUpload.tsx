@@ -173,14 +173,14 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
               variant="hero" 
               size="lg" 
               onClick={handleCameraCapture}
-              className="shadow-card hover:shadow-primary"
+              className="shadow-card hover:shadow-primary hover-scale"
             >
               <Camera className="h-5 w-5" />
               {language === 'ru' ? 'Сделать фото' : 'Take Photo'}
             </Button>
             
             <label htmlFor="menu-upload">
-              <Button variant="secondary" size="lg" className="cursor-pointer" asChild>
+              <Button variant="secondary" size="lg" className="cursor-pointer hover-scale" asChild>
                 <span>
                   <Upload className="h-5 w-5" />
                   {language === 'ru' ? 'Выбрать файл' : 'Choose File'}
