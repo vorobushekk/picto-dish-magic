@@ -69,6 +69,18 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
     );
   }
 
+  if (dishes.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="gradient-card rounded-xl p-8 shadow-card">
+          <p className="text-muted-foreground text-lg">
+            Upload a menu and click "Generate Magic" to see stunning dish visuals here!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
