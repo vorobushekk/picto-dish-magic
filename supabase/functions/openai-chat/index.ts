@@ -86,24 +86,41 @@ serve(async (req) => {
     console.log('OpenAI response received successfully');
     
     const generatedText = data.choices[0].message.content;
+    console.log('Raw OpenAI response:', generatedText);
     
-    // Try to parse the response as JSON
+    // Clean the response by removing markdown code blocks if present
+    let cleanedText = generatedText.trim();
+    
+    // Remove markdown code blocks (```json and ```)
+    if (cleanedText.startsWith('```json')) {
+      cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (cleanedText.startsWith('```')) {
+      cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    
+    console.log('Cleaned text for parsing:', cleanedText);
+    
+    // Try to parse the cleaned response as JSON
     try {
-      const parsedResult = JSON.parse(generatedText);
+      const parsedResult = JSON.parse(cleanedText);
       console.log('Successfully parsed menu analysis:', parsedResult);
       return new Response(JSON.stringify(parsedResult), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (parseError) {
       console.error('Failed to parse OpenAI response as JSON:', parseError);
-      // Return a fallback response
+      console.error('Raw response was:', generatedText);
+      console.error('Cleaned text was:', cleanedText);
+      
+      // Return the raw response for debugging
       return new Response(JSON.stringify({ 
-        success: true, 
-        dishes: [{ 
-          name: "Menu Analysis", 
-          description: generatedText.substring(0, 200) + "..." 
-        }] 
+        success: false,
+        error: 'Failed to parse JSON response',
+        raw_response: generatedText,
+        cleaned_response: cleanedText,
+        parse_error: parseError.message
       }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
