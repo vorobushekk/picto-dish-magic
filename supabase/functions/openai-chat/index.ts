@@ -33,7 +33,7 @@ serve(async (req) => {
     const messages = [
       { 
         role: 'system', 
-        content: 'You are a menu analysis expert. Always respond with valid JSON only. Return exactly this format: {"dishes": [{"name": "dish name", "description": "description or empty string"}]}. No additional text, no markdown, just the JSON object.'
+        content: 'You are a menu analysis expert. Always respond with valid JSON only. Return exactly this format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}. No additional text, no markdown, just the JSON object.'
       }
     ];
 
