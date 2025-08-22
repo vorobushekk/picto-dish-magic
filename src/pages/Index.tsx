@@ -88,10 +88,10 @@ const Index = () => {
         // Parse the dishes from the AI response
         if (data.success && data.dishes) {
           setGeneratedDishes(data.dishes);
+          setIsGenerating(false); // stop skeletons so results can show
           toast.success(`🎉 Found ${data.dishes.length} dishes! Now generating images...`);
-          
-          // Automatically generate images for all dishes
-          await generateImagesForDishes(data.dishes);
+          // Kick off image generation without blocking UI
+          void generateImagesForDishes(data.dishes);
         } else {
           throw new Error('Invalid response format');
         }
