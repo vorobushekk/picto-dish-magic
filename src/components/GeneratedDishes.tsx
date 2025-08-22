@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Share2, Table, Grid } from 'lucide-react';
+import { Share2, Table, Grid, Camera, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 interface GeneratedDish {
   name: string;
   description: string;
+  imageUrl?: string;
+  isGeneratingImage?: boolean;
 }
 
 interface GeneratedDishesProps {
   dishes: GeneratedDish[];
   isLoading?: boolean;
+  onGenerateImage?: (dishIndex: number) => void;
 }
 
-export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading }) => {
+export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading, onGenerateImage }) => {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   const handleShare = (dishName: string) => {
@@ -26,6 +29,25 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
     } else {
       navigator.clipboard.writeText(`Check out this ${dishName}!`);
       toast.success('Copied to clipboard!');
+    }
+  };
+
+  const handleDownloadImage = async (imageUrl: string, dishName: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${dishName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      toast.success(`Downloaded ${dishName} image!`);
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      toast.error('Failed to download image');
     }
   };
 
@@ -104,37 +126,80 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
               </thead>
               <tbody>
                 {dishes.map((dish, index) => (
-                  <React.Fragment key={`${dish.name}-${index}`}>
-                    {/* Dish Name Row */}
-                    <tr className="border-b border-border/30 hover:bg-muted/20 transition-colors">
-                      <td className="py-3 px-4 text-muted-foreground font-mono" rowSpan={2}>
-                        {String(index + 1).padStart(2, '0')}
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-primary text-lg">
-                          🍽️ {dish.name}
+                <tr key={`${dish.name}-${index}`} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
+                  <td className="py-4 px-4 text-muted-foreground font-mono">
+                    {String(index + 1).padStart(2, '0')}
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="flex items-center gap-4">
+                      {/* Image Preview */}
+                      <div className="flex-shrink-0">
+                        {dish.imageUrl ? (
+                          <img
+                            src={dish.imageUrl}
+                            alt={dish.name}
+                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
+                            🍽️
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Dish Info */}
+                      <div className="flex-grow">
+                        <div className="font-semibold text-primary text-lg mb-1">
+                          {dish.name}
                         </div>
-                      </td>
-                      <td className="py-3 px-4 text-center" rowSpan={2}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleShare(dish.name)}
-                          className="text-muted-foreground hover:text-primary"
-                        >
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                    {/* Description Row */}
-                    <tr className="border-b border-border/50 hover:bg-muted/20 transition-colors">
-                      <td className="py-3 px-4 pl-8">
-                        <div className="text-muted-foreground text-sm italic">
+                        <div className="text-muted-foreground text-sm">
                           {dish.description ? `"${dish.description}"` : "No description available"}
                         </div>
-                      </td>
-                    </tr>
-                  </React.Fragment>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      {!dish.imageUrl && onGenerateImage && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onGenerateImage(index)}
+                          disabled={dish.isGeneratingImage}
+                          className="min-w-[100px]"
+                        >
+                          {dish.isGeneratingImage ? (
+                            <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                          ) : (
+                            <>
+                              <Camera className="h-4 w-4 mr-1" />
+                              Generate
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      
+                      {dish.imageUrl && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      )}
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleShare(dish.name)}
+                        className="text-muted-foreground hover:text-primary"
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
                 ))}
               </tbody>
             </table>
@@ -153,17 +218,57 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
       ) : (
         // Cards View (existing)
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dishes.map((dish, index) => (
+              {dishes.map((dish, index) => (
             <Card 
               key={`${dish.name}-${index}`} 
               className="gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="p-6 space-y-4">
+                {/* Image Section */}
                 <div className="text-center">
-                  <div className="gradient-primary rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl">🍽️</span>
-                  </div>
+                  {dish.imageUrl ? (
+                    <div className="relative">
+                      <img
+                        src={dish.imageUrl}
+                        alt={dish.name}
+                        className="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
+                        className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-square bg-muted rounded-lg mb-4 flex flex-col items-center justify-center">
+                      {dish.isGeneratingImage ? (
+                        <>
+                          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mb-2" />
+                          <span className="text-sm text-muted-foreground">Generating...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-4xl mb-2">🍽️</span>
+                          {onGenerateImage && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onGenerateImage(index)}
+                              className="mt-2"
+                            >
+                              <Camera className="h-4 w-4 mr-2" />
+                              Generate Image
+                            </Button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                  
                   <h3 className="font-semibold text-xl text-primary mb-2">
                     {dish.name}
                   </h3>
