@@ -169,17 +169,8 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
           />
           
           <div className="flex gap-3 justify-center flex-wrap">
-            <label htmlFor="menu-upload">
-              <Button variant="hero" size="lg" className="cursor-pointer" asChild>
-                <span>
-                  <Upload className="h-5 w-5" />
-                  {language === 'ru' ? 'Выбрать файл' : 'Choose File'}
-                </span>
-              </Button>
-            </label>
-            
             <Button 
-              variant="secondary" 
+              variant="hero" 
               size="lg" 
               onClick={handleCameraCapture}
               className="shadow-card hover:shadow-primary"
@@ -187,6 +178,15 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
               <Camera className="h-5 w-5" />
               {language === 'ru' ? 'Сделать фото' : 'Take Photo'}
             </Button>
+            
+            <label htmlFor="menu-upload">
+              <Button variant="secondary" size="lg" className="cursor-pointer" asChild>
+                <span>
+                  <Upload className="h-5 w-5" />
+                  {language === 'ru' ? 'Выбрать файл' : 'Choose File'}
+                </span>
+              </Button>
+            </label>
           </div>
         </div>
       </div>
