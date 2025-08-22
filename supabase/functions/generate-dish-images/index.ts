@@ -54,13 +54,17 @@ serve(async (req) => {
     console.log("Generating image with prompt:", foodPrompt);
 
     const output = await replicate.run(
-      "ideogram-ai/ideogram-v3-turbo",
+      "black-forest-labs/flux-schnell",
       {
         input: {
           prompt: foodPrompt,
+          go_fast: true,
+          megapixels: "1",
+          num_outputs: 1,
           aspect_ratio: "1:1",
-          model: "V_3_TURBO",
-          magic_prompt_option: "Auto"
+          output_format: "webp",
+          output_quality: 80,
+          num_inference_steps: 4
         }
       }
     );

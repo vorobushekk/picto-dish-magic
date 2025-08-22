@@ -120,10 +120,8 @@ const Index = () => {
       }));
       setGeneratedDishes([...updatedDishes]);
 
-      // Generate images for each dish sequentially
-      for (let i = 0; i < updatedDishes.length; i++) {
-        const dish = updatedDishes[i];
-        
+      // Generate images for all dishes in parallel
+      const imagePromises = updatedDishes.map(async (dish, index) => {
         try {
           const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/generate-dish-images', {
             method: 'POST',
@@ -141,35 +139,41 @@ const Index = () => {
           if (response.ok) {
             const data = await response.json();
             if (data.success && data.imageUrl) {
-              updatedDishes[i].imageUrl = data.imageUrl;
-              updatedDishes[i].isGeneratingImage = false;
+              updatedDishes[index].imageUrl = data.imageUrl;
+              updatedDishes[index].isGeneratingImage = false;
               
               // Update state immediately to show this completed dish
               setGeneratedDishes([...updatedDishes]);
               
               toast.success(`✨ ${dish.name} is ready!`);
-              
-              // Small delay for visual effect
-              await new Promise(resolve => setTimeout(resolve, 300));
-            } else {
-              toast.error(`Failed to generate image for ${dish.name}`);
-              updatedDishes[i].isGeneratingImage = false;
-              setGeneratedDishes([...updatedDishes]);
+              return { success: true, dish: dish.name };
             }
-          } else {
-            toast.error(`Failed to generate image for ${dish.name}`);
-            updatedDishes[i].isGeneratingImage = false;
-            setGeneratedDishes([...updatedDishes]);
           }
+          
+          updatedDishes[index].isGeneratingImage = false;
+          setGeneratedDishes([...updatedDishes]);
+          toast.error(`Failed to generate image for ${dish.name}`);
+          return { success: false, dish: dish.name };
+          
         } catch (error) {
           console.error(`Error generating image for ${dish.name}:`, error);
-          toast.error(`Failed to generate image for ${dish.name}`);
-          updatedDishes[i].isGeneratingImage = false;
+          updatedDishes[index].isGeneratingImage = false;
           setGeneratedDishes([...updatedDishes]);
+          toast.error(`Failed to generate image for ${dish.name}`);
+          return { success: false, dish: dish.name };
         }
-      }
+      });
 
-      toast.success('🎉 All dishes are ready to serve!');
+      // Wait for all images to complete
+      const results = await Promise.allSettled(imagePromises);
+      const successful = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+      
+      if (successful === dishes.length) {
+        toast.success('🎉 All dishes are ready to serve!');
+      } else {
+        toast.success(`✨ ${successful}/${dishes.length} images generated successfully!`);
+      }
+      
     } catch (error) {
       console.error('Error generating images:', error);
       toast.error('Failed to generate images');
