@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, imageData } = await req.json();
 
     if (!prompt) {
       return new Response(JSON.stringify({ 
@@ -27,7 +27,34 @@ serve(async (req) => {
       });
     }
 
-    console.log('Calling OpenAI with prompt:', prompt.substring(0, 100) + '...');
+    console.log('Calling OpenAI with vision prompt for menu analysis');
+
+    // Create messages array for vision API
+    const messages = [
+      { 
+        role: 'system', 
+        content: 'You are a menu analysis expert. Analyze restaurant menu images and extract dish information as JSON. Always respond with valid JSON in the exact format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}'
+      }
+    ];
+
+    // If imageData is provided, use vision format
+    if (imageData) {
+      messages.push({
+        role: 'user',
+        content: [
+          { type: 'text', text: prompt },
+          {
+            type: 'image_url',
+            image_url: {
+              url: imageData
+            }
+          }
+        ]
+      });
+    } else {
+      // Fallback to text-only
+      messages.push({ role: 'user', content: prompt });
+    }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -36,21 +63,16 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are a menu analysis expert. Analyze restaurant menu images and extract dish information as JSON. Always respond with valid JSON in the exact format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}'
-          },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 2000,
+        model: 'gpt-4o-mini', // Vision-capable model
+        messages: messages,
+        max_tokens: 1000,
         temperature: 0.3
       }),
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', response.status, await response.text());
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Failed to analyze menu' 
@@ -61,14 +83,14 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('OpenAI response:', data);
+    console.log('OpenAI response received successfully');
     
     const generatedText = data.choices[0].message.content;
     
     // Try to parse the response as JSON
     try {
       const parsedResult = JSON.parse(generatedText);
-      console.log('Parsed result:', parsedResult);
+      console.log('Successfully parsed menu analysis:', parsedResult);
       return new Response(JSON.stringify(parsedResult), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -78,8 +100,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         success: true, 
         dishes: [{ 
-          name: "Menu Item", 
-          description: generatedText 
+          name: "Menu Analysis", 
+          description: generatedText.substring(0, 200) + "..." 
         }] 
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
