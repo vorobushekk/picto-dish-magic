@@ -97,16 +97,6 @@ const Index = () => {
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
             Upload any menu and watch as AI transforms each dish into stunning, mouth-watering visuals. ✨🍴
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Button variant="secondary" size="xl" className="shadow-glow">
-              <Camera className="h-5 w-5" />
-              See Examples
-            </Button>
-            <Button variant="hero" size="xl" className="shadow-glow">
-              <Wand2 className="h-5 w-5" />
-              Start Creating
-            </Button>
-          </div>
         </div>
       </section>
 
