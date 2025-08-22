@@ -360,7 +360,7 @@ const Index = () => {
             className="bg-white/95 backdrop-blur-md hover:bg-white border-white/30 shadow-lg transition-all duration-300 hover:scale-105"
           >
             <Globe className="h-4 w-4 mr-2" />
-            {language === 'en' ? 'RU' : 'EN'}
+            {language.toUpperCase()}
           </Button>
         </div>
       </div>
