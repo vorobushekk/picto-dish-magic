@@ -10,9 +10,10 @@ interface MenuUploadProps {
   onUpload: (file: File) => void;
   uploadedFile?: File | null;
   onClear?: () => void;
+  language?: 'ru' | 'en';
 }
 
-export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, onClear }) => {
+export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, onClear, language = 'en' }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -97,7 +98,9 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
     return (
       <div className="relative gradient-card rounded-xl p-6 shadow-card">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-primary">Uploaded Menu</h3>
+          <h3 className="text-lg font-semibold text-primary">
+            {language === 'ru' ? 'Загруженное меню' : 'Uploaded Menu'}
+          </h3>
           <Button 
             variant="ghost" 
             size="sm" 
@@ -149,10 +152,10 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
         
         <div className="space-y-2">
           <p className="text-xl font-semibold text-primary">
-            Click to upload or drag and drop
+            {language === 'ru' ? 'Нажмите для загрузки или перетащите файл' : 'Click to upload or drag and drop'}
           </p>
           <p className="text-muted-foreground">
-            PNG, JPG, GIF up to 10MB
+            PNG, JPG, GIF {language === 'ru' ? 'до 10МБ' : 'up to 10MB'}
           </p>
         </div>
 
@@ -170,7 +173,7 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
               <Button variant="hero" size="lg" className="cursor-pointer" asChild>
                 <span>
                   <Upload className="h-5 w-5" />
-                  Choose File
+                  {language === 'ru' ? 'Выбрать файл' : 'Choose File'}
                 </span>
               </Button>
             </label>
@@ -182,7 +185,7 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
               className="shadow-card hover:shadow-primary"
             >
               <Camera className="h-5 w-5" />
-              Take Photo
+              {language === 'ru' ? 'Сделать фото' : 'Take Photo'}
             </Button>
           </div>
         </div>

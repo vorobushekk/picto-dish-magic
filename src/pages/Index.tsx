@@ -421,6 +421,7 @@ const Index = () => {
             onUpload={handleFileUpload}
             uploadedFile={uploadedFile}
             onClear={handleClearUpload}
+            language={language}
           />
 
           {uploadedFile && (
