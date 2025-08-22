@@ -184,7 +184,8 @@ export const MenuUpload: React.FC<MenuUploadProps> = ({ onUpload, uploadedFile, 
               size="lg"
               type="button"
               onClick={() => document.getElementById('menu-upload')?.click()}
-              className="hover-scale"
+              className="hover-scale transform"
+              aria-label={language === 'ru' ? 'Выбрать файл' : 'Choose File'}
             >
               <Upload className="h-5 w-5" />
               {language === 'ru' ? 'Выбрать файл' : 'Choose File'}
