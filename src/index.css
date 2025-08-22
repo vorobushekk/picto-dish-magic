@@ -149,3 +149,10 @@ All colors MUST be HSL.
     50% { transform: translateY(-10px); }
   }
 }
+
+/* Utilities */
+@layer utilities {
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+}
