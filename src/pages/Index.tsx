@@ -381,11 +381,23 @@ const Index = () => {
             <ChefHat className="h-16 w-16 text-white mx-auto mb-6" />
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            {t.heroTitle.split(' Magic')[0]}{' '}
-            <span className="relative">
-              {language === 'ru' ? 'меню' : 'Magic'}
-              <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-pulse" />
-            </span>
+            {language === 'ru' ? (
+              <>
+                Магия{' '}
+                <span className="relative">
+                  меню
+                  <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-pulse" />
+                </span>
+              </>
+            ) : (
+              <>
+                Menu{' '}
+                <span className="relative">
+                  Magic
+                  <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-300 animate-pulse" />
+                </span>
+              </>
+            )}
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
             {t.heroSubtitle}
