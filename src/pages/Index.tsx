@@ -350,21 +350,23 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Language Toggle */}
-      <div className="fixed top-4 right-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleLanguage}
-          className="bg-white/90 backdrop-blur-sm hover:bg-white border-white/20 shadow-lg"
-        >
-          <Globe className="h-4 w-4 mr-2" />
-          {language === 'en' ? 'RU' : 'EN'}
-        </Button>
+      {/* Language Toggle - Sticky Header */}
+      <div className="sticky top-0 z-50 w-full">
+        <div className="flex justify-end p-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleLanguage}
+            className="bg-white/95 backdrop-blur-md hover:bg-white border-white/30 shadow-lg transition-all duration-300 hover:scale-105"
+          >
+            <Globe className="h-4 w-4 mr-2" />
+            {language === 'en' ? 'RU' : 'EN'}
+          </Button>
+        </div>
       </div>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden -mt-20 pt-20">
         <div className="absolute inset-0 gradient-hero opacity-90" />
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20"
