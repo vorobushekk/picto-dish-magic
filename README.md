@@ -1,73 +1,154 @@
-# Welcome to your Lovable project
+# 🍽️ Picto Dish Magic
 
-## Project info
+**Transform any text menu into a visual feast with AI-generated food photography**
 
-**URL**: https://lovable.dev/projects/24b169c5-466f-4a1b-9723-fd0ed884a615
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20App-brightgreen)](https://24b169c5-466f-4a1b-9723-fd0ed884a615.lovableproject.com)
+[![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
 
-## How can I edit this code?
+> Can't decide what to order? Upload any menu without pictures and get it back with stunning AI-generated visuals of every dish!
 
-There are several ways of editing your application.
+![Hero Screenshot](public/lovable-uploads/4e109231-ad76-4516-9d31-5e0af57a6be9.png)
 
-**Use Lovable**
+## ✨ Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/24b169c5-466f-4a1b-9723-fd0ed884a615) and start prompting.
+- **🔍 AI Menu Analysis**: Automatically extracts dish names and descriptions from uploaded menu images
+- **🎨 AI Image Generation**: Creates stunning, realistic food photography for every dish using advanced AI models
+- **🌐 Multilingual Support**: Fully supports English and Russian languages with automatic detection
+- **📱 Responsive Design**: Beautiful, mobile-first interface that works seamlessly across all devices
+- **⚡ Fast Processing**: Parallel image generation for quick results
+- **🎯 Smart OCR**: Advanced optical character recognition to read even complex menu layouts
+- **💫 Beautiful UI**: Modern design with smooth animations and intuitive user experience
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 How It Works
 
-**Use your preferred IDE**
+1. **📤 Upload**: Simply upload a photo of any text-only menu
+2. **🤖 AI Analysis**: Our AI reads and understands the menu, extracting dish information
+3. **🎨 Image Generation**: AI creates beautiful, realistic images for each dish
+4. **🍽️ Visual Menu**: Get your menu back with stunning visuals to help you decide what to order!
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🔒 Security & Architecture
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Why Supabase?
 
-Follow these steps:
+This application leverages **Supabase** as its backend-as-a-service platform for enhanced security and performance:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **🔐 Secure API Management**: OpenAI and Replicate API keys are stored as encrypted secrets, never exposed in client-side code
+- **🛡️ Edge Functions**: Menu analysis and image generation happen server-side via Supabase Edge Functions
+- **🚀 Serverless Architecture**: No server maintenance required, with automatic scaling and global CDN
+- **🔒 Environment Isolation**: Production and development environments are completely separated
+- **📊 Built-in Analytics**: Monitor API usage and performance through Supabase dashboard
+- **⚡ Edge Computing**: Fast response times with globally distributed edge functions
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🛠️ Tech Stack
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Frontend
+- **React 18** - Modern React with hooks and concurrent features
+- **TypeScript** - Type-safe development for better code quality
+- **Tailwind CSS** - Utility-first CSS framework with custom design system
+- **Vite** - Lightning-fast build tool and development server
+- **Lucide React** - Beautiful, customizable icon library
+- **React Router** - Client-side routing for smooth navigation
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Backend & AI Integration
+- **Supabase Edge Functions** - Serverless functions for secure API integration
+- **OpenAI GPT-4 Vision** - Advanced AI model for menu text extraction and analysis
+- **Replicate AI** - High-quality food image generation using FLUX models
+- **Supabase** - Backend-as-a-Service platform for secure API management
 
-**Edit a file directly in GitHub**
+### UI/UX Libraries
+- **Radix UI** - Accessible, unstyled UI primitives for robust components
+- **Class Variance Authority** - Type-safe component variants system
+- **Sonner** - Beautiful toast notifications for user feedback
+- **React Hook Form** - Performant forms with built-in validation
+- **TanStack Query** - Powerful data fetching and caching library
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🌍 Internationalization
 
-**Use GitHub Codespaces**
+The app supports multiple languages with automatic detection:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **English** - Full interface and processing support
+- **Russian** - Complete localization including menu analysis
+- **Auto-detection** - Automatically detects menu language for optimal processing
 
-## What technologies are used for this project?
+## 🎯 AI Models Used
 
-This project is built with:
+- **OpenAI GPT-4 Vision** - For menu text extraction and dish analysis
+- **FLUX.1 (via Replicate)** - For high-quality food image generation
+- **Custom OCR Pipeline** - Optimized for menu text recognition
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Getting Started
 
-## How can I deploy this project?
+### Prerequisites
 
-Simply open [Lovable](https://lovable.dev/projects/24b169c5-466f-4a1b-9723-fd0ed884a615) and click on Share -> Publish.
+- Node.js 18+ 
+- npm or yarn
+- Supabase account (for backend services)
 
-## Can I connect a custom domain to my Lovable project?
+### Installation
 
-Yes, you can!
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd picto-dish-magic
+   ```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+3. **Set up Supabase**
+   - Create a new Supabase project
+   - Configure environment variables
+   - Deploy the included Edge Functions
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to `http://localhost:5173`
+
+## 📱 Mobile App
+
+This project also supports mobile deployment through Capacitor:
+
+- **iOS & Android** ready with camera integration
+- **Native camera access** for menu photo capture
+- **Optimized performance** for mobile devices
+
+## 🔧 Configuration
+
+The app uses Supabase Edge Functions for secure API integration. Key configuration files:
+
+- `supabase/functions/openai-chat/` - Menu analysis function
+- `supabase/functions/generate-dish-images/` - Image generation function
+- `capacitor.config.ts` - Mobile app configuration
+
+## 🎨 Design System
+
+Built with a comprehensive design system featuring:
+
+- **Semantic color tokens** for consistent theming
+- **Dark/light mode support** with smooth transitions
+- **Responsive breakpoints** for all screen sizes
+- **Custom animations** and micro-interactions
+- **Accessible components** following WCAG guidelines
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Lovable** for the incredible AI-powered development platform
+- **OpenAI** for providing GPT-4 Vision API for menu analysis
+- **Replicate** for high-quality AI image generation models
+- **Supabase** for the secure, scalable backend infrastructure
+
+---
+
+**🍽️ Made with appetite for great food photography and modern web technologies 🚀**
+
+[Try Live Demo](https://24b169c5-466f-4a1b-9723-fd0ed884a615.lovableproject.com) | [Report Bug](https://github.com/yourusername/picto-dish-magic/issues) | [Request Feature](https://github.com/yourusername/picto-dish-magic/issues)
