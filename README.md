@@ -1,6 +1,6 @@
 # ✨ [Picto Dish Magic](https://24b169c5-466f-4a1b-9723-fd0ed884a615.lovableproject.com/)
 
-> Transform any text menu into a visual menu with AI-generated food photography. Decide what to eat easier!
+> Transform any text menu into a visual menu with food photography. Decide what to eat easier!
 
 [![Status: Live](https://img.shields.io/badge/Status-Live-brightgreen)](https://24b169c5-466f-4a1b-9723-fd0ed884a615.lovableproject.com/)
 [![Backend: Supabase](https://img.shields.io/badge/Backend-Supabase-green)](https://supabase.com)
