@@ -8,7 +8,7 @@
 
 ## 🌟 Overview
 
-Picto Dish Magic is a modern web application that transforms text-only restaurant menus into visual experiences with AI-generated food photography. Upload any menu without pictures and get it back with stunning, realistic images of every dish to help you decide what to order.
+Picto Dish Magic is a modern web application that transforms text-only restaurant menus into visual experiences with food photography. Upload any menu without pictures and get it back with stunning images of every dish to help you decide what to order.
 
 ## ✨ Features
 
