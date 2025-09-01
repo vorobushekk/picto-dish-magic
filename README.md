@@ -1,4 +1,4 @@
-# ✨ [Insta Dish Magic](https://24b169c5-466f-4a1b-9723-fd0ed884a615.lovableproject.com/)
+# ✨ [Insta Dish Magic](https://picto-dish-magic.lovable.app/)
 
 > Transform any text menu into a visual menu with food photography. Decide what to eat easier!
 
