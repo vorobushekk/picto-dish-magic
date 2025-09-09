@@ -33,7 +33,7 @@ serve(async (req) => {
     const messages = [
       { 
         role: 'system', 
-        content: 'You are a menu analysis expert. Always respond with valid JSON only. Return exactly this format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}. IMPORTANT: Never use quotation marks or double quotes in dish names or descriptions. Use single quotes or remove quotes entirely. No additional text, no markdown, just the JSON object.'
+        content: 'You are a menu analysis expert. Return ONLY strict, valid JSON matching exactly: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}. Rules: - Use double quotes for all JSON strings. - Escape any inner double quotes with a backslash. - No markdown, code fences, comments, or trailing commas. - Do not add extra fields or text.'
       }
     ];
 
@@ -98,9 +98,8 @@ serve(async (req) => {
       cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
     
-    // Fix common JSON parsing issues with escaped quotes in dish names
-    // Replace problematic escaped quotes with single quotes
-    cleanedText = cleanedText.replace(/\\"([^"]*?)\\"/g, "'$1'");
+    // Normalize smart quotes to straight quotes to help JSON parsing
+    cleanedText = cleanedText.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
     
     console.log('Cleaned text for parsing:', cleanedText);
     
@@ -116,13 +115,43 @@ serve(async (req) => {
       console.error('Raw response was:', generatedText);
       console.error('Cleaned text was:', cleanedText);
       
+      // Attempt to auto-repair common issues and parse again
+      try {
+        let repaired = cleanedText;
+
+        // 1) Replace single-quoted strings with double-quoted strings
+        repaired = repaired.replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_m, grp) => `"${grp.replace(/"/g, '\\"')}"`);
+
+        // 2) Quote unquoted values for name/description (until next comma/}}])
+        const quoteValue = (key: string, text: string) =>
+          text.replace(new RegExp(`("${key}"\\s*:\\s*)(?!["{\[])([^,}\\]]+)`, 'g'), (_m, p1, p2) => {
+            const val = p2.trim();
+            return `${p1}"${val.replace(/"/g, '\\"')}"`;
+          });
+
+        repaired = quoteValue('name', repaired);
+        repaired = quoteValue('description', repaired);
+
+        // 3) Remove trailing commas before closing braces/brackets
+        repaired = repaired.replace(/,\s*(\}|\])/g, '$1');
+
+        console.log('Repaired text for parsing:', repaired);
+        const parsedRepaired = JSON.parse(repaired);
+        console.log('Successfully parsed after repair:', parsedRepaired);
+        return new Response(JSON.stringify(parsedRepaired), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (repairError) {
+        console.error('Repair attempt failed:', repairError);
+      }
+      
       // Return the raw response for debugging
       return new Response(JSON.stringify({ 
         success: false,
         error: 'Failed to parse JSON response',
         raw_response: generatedText,
         cleaned_response: cleanedText,
-        parse_error: parseError.message
+        parse_error: (parseError as Error).message
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
