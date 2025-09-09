@@ -66,7 +66,8 @@ serve(async (req) => {
         model: 'gpt-4o-mini', // Vision-capable model
         messages: messages,
         max_tokens: 1000,
-        temperature: 0.3
+        temperature: 0.3,
+        response_format: { type: "json_object" } // Force JSON output
       }),
     });
 
@@ -134,6 +135,11 @@ serve(async (req) => {
 
         // 3) Remove trailing commas before closing braces/brackets
         repaired = repaired.replace(/,\s*(\}|\])/g, '$1');
+
+        // 4) Fix duplicate closing braces (e.g., "]}}" -> "]}")
+        repaired = repaired.replace(/\}\s*\}/g, '}');
+        repaired = repaired.replace(/\]\s*\}\s*\}/g, ']}');
+        console.log('Applied duplicate brace fix');
 
         console.log('Repaired text for parsing:', repaired);
         const parsedRepaired = JSON.parse(repaired);
