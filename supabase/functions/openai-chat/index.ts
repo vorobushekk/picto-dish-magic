@@ -33,7 +33,7 @@ serve(async (req) => {
     const messages = [
       { 
         role: 'system', 
-        content: 'You are a menu analysis expert. Always respond with valid JSON only. Return exactly this format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}. No additional text, no markdown, just the JSON object.'
+        content: 'You are a menu analysis expert. Always respond with valid JSON only. Return exactly this format: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}. IMPORTANT: Never use quotation marks or double quotes in dish names or descriptions. Use single quotes or remove quotes entirely. No additional text, no markdown, just the JSON object.'
       }
     ];
 
@@ -97,6 +97,10 @@ serve(async (req) => {
     } else if (cleanedText.startsWith('```')) {
       cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
     }
+    
+    // Fix common JSON parsing issues with escaped quotes in dish names
+    // Replace problematic escaped quotes with single quotes
+    cleanedText = cleanedText.replace(/\\"([^"]*?)\\"/g, "'$1'");
     
     console.log('Cleaned text for parsing:', cleanedText);
     
