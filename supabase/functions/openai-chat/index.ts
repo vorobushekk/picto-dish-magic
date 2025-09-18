@@ -63,7 +63,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini', // Vision-capable model
+        model: 'gpt-5-mini-2025-08-07', // Vision-capable model
         messages: messages,
         max_completion_tokens: 1000,
         response_format: { type: "json_object" } // Force JSON output
