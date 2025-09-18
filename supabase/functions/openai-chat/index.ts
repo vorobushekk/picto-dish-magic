@@ -65,8 +65,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4o-mini', // Vision-capable model
         messages: messages,
-        max_tokens: 1000,
-        temperature: 0.3,
+        max_completion_tokens: 1000,
         response_format: { type: "json_object" } // Force JSON output
       }),
     });
