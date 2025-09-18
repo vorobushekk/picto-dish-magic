@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Share2, Camera, Download } from 'lucide-react';
+import { Share2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -29,25 +29,6 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
     } else {
       navigator.clipboard.writeText(`Check out this ${dishName}!`);
       toast.success('Copied to clipboard!');
-    }
-  };
-
-  const handleDownloadImage = async (imageUrl: string, dishName: string) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${dishName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      toast.success(`Downloaded ${dishName} image!`);
-    } catch (error) {
-      console.error('Error downloading image:', error);
-      toast.error('Failed to download image');
     }
   };
 
@@ -114,14 +95,6 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                       alt={dish.name}
                       className="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg"
                     />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
-                      className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm hover-scale"
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
                     <div className="absolute bottom-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-fade-in">
                       ✨ Ready!
                     </div>
