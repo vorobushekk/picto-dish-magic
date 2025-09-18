@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Share2, Table, Grid, Camera, Download } from 'lucide-react';
+import { Share2, Camera, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -19,7 +19,6 @@ interface GeneratedDishesProps {
 }
 
 export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoading, onGenerateImage, placeholderText }) => {
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
 
   const handleShare = (dishName: string) => {
     if (navigator.share) {
@@ -91,230 +90,94 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
         <p className="text-muted-foreground mt-2">
           {dishes.length} {dishes.length === 1 ? 'dish' : 'dishes'} found on your menu
         </p>
-        
-        {/* View Toggle */}
-        <div className="flex justify-center gap-2 mt-4">
-          <Button
-            variant={viewMode === 'cards' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('cards')}
-          >
-            <Grid className="h-4 w-4 mr-2" />
-            Cards
-          </Button>
-          <Button
-            variant={viewMode === 'table' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('table')}
-          >
-            <Table className="h-4 w-4 mr-2" />
-            Table
-          </Button>
-        </div>
       </div>
 
-      {viewMode === 'table' ? (
-        // Table View
-        <div className="gradient-card rounded-xl p-6 shadow-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 font-semibold text-primary">#</th>
-                  <th className="text-left py-3 px-4 font-semibold text-primary">Dish Information</th>
-                  <th className="text-center py-3 px-4 font-semibold text-primary">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dishes.map((dish, index) => (
-                <tr 
-                  key={`${dish.name}-${index}`} 
-                  className={`border-b border-border/30 hover:bg-muted/20 transition-all duration-300 ${
-                    dish.imageUrl ? 'animate-fade-in' : 'opacity-70'
-                  }`}
-                  style={{ animationDelay: `${index * 0.15}s` }}
-                >
-                  <td className="py-4 px-4 text-muted-foreground font-mono">
-                    {String(index + 1).padStart(2, '0')}
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="flex items-center gap-4">
-                      {/* Image Preview */}
-                      <div className="flex-shrink-0">
-                        {dish.imageUrl ? (
-                          <img
-                            src={dish.imageUrl}
-                            alt={dish.name}
-                            className="w-16 h-16 object-cover rounded-lg shadow-sm animate-scale-in"
-                          />
-                        ) : dish.isGeneratingImage ? (
-                          <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
-                            <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-                          </div>
-                        ) : (
-                          <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
-                            🍽️
-                          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {dishes.map((dish, index) => (
+          <Card 
+            key={`${dish.name}-${index}`} 
+            className={`gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden ${
+              dish.imageUrl ? 'animate-scale-in' : ''
+            }`}
+            style={{ 
+              animationDelay: `${index * 0.1}s`,
+              opacity: dish.imageUrl ? 1 : 0.7
+            }}
+          >
+            <div className="p-6 space-y-4">
+              {/* Image Section */}
+              <div className="text-center">
+                {dish.imageUrl ? (
+                  <div className="relative animate-scale-in">
+                    <img
+                      src={dish.imageUrl}
+                      alt={dish.name}
+                      className="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
+                      className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm hover-scale"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <div className="absolute bottom-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-fade-in">
+                      ✨ Ready!
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full aspect-square bg-muted rounded-lg mb-4 flex flex-col items-center justify-center relative">
+                    {dish.isGeneratingImage ? (
+                      <>
+                        <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mb-2" />
+                        <span className="text-sm text-muted-foreground animate-pulse">Creating magic...</span>
+                        <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                          🎨 Generating
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl mb-2">🍽️</span>
+                        {onGenerateImage && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onGenerateImage(index)}
+                            className="mt-2 hover-scale"
+                          >
+                            <Camera className="h-4 w-4 mr-2" />
+                            Generate Image
+                          </Button>
                         )}
-                      </div>
-                      
-                      {/* Dish Info */}
-                      <div className="flex-grow">
-                        <div className="font-semibold text-primary text-lg mb-1">
-                          {dish.name}
-                        </div>
-                        <div className="text-muted-foreground text-sm">
-                          {dish.description ? `"${dish.description}"` : "No description available"}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-4 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      {!dish.imageUrl && onGenerateImage && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onGenerateImage(index)}
-                          disabled={dish.isGeneratingImage}
-                          className="min-w-[100px]"
-                        >
-                          {dish.isGeneratingImage ? (
-                            <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-                          ) : (
-                            <>
-                              <Camera className="h-4 w-4 mr-1" />
-                              Generate
-                            </>
-                          )}
-                        </Button>
-                      )}
-                      
-                      {dish.imageUrl && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      )}
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleShare(dish.name)}
-                        className="text-muted-foreground hover:text-primary"
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          
-          {/* Table Summary */}
-          <div className="mt-6 pt-4 border-t border-border/50">
-            <div className="flex justify-between items-center text-sm text-muted-foreground">
-              <span>Total dishes: {dishes.length}</span>
-              <span>
-                Dishes with descriptions: {dishes.filter(d => d.description && d.description.trim()).length}
-              </span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        // Cards View (existing)
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {dishes.map((dish, index) => (
-            <Card 
-              key={`${dish.name}-${index}`} 
-              className={`gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden ${
-                dish.imageUrl ? 'animate-scale-in' : ''
-              }`}
-              style={{ 
-                animationDelay: `${index * 0.1}s`,
-                opacity: dish.imageUrl ? 1 : 0.7
-              }}
-            >
-              <div className="p-6 space-y-4">
-                {/* Image Section */}
-                <div className="text-center">
-                  {dish.imageUrl ? (
-                    <div className="relative animate-scale-in">
-                      <img
-                        src={dish.imageUrl}
-                        alt={dish.name}
-                        className="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDownloadImage(dish.imageUrl!, dish.name)}
-                        className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm hover-scale"
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <div className="absolute bottom-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-fade-in">
-                        ✨ Ready!
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-square bg-muted rounded-lg mb-4 flex flex-col items-center justify-center relative">
-                      {dish.isGeneratingImage ? (
-                        <>
-                          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mb-2" />
-                          <span className="text-sm text-muted-foreground animate-pulse">Creating magic...</span>
-                          <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-                            🎨 Generating
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-4xl mb-2">🍽️</span>
-                          {onGenerateImage && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => onGenerateImage(index)}
-                              className="mt-2 hover-scale"
-                            >
-                              <Camera className="h-4 w-4 mr-2" />
-                              Generate Image
-                            </Button>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                  
-                  <h3 className="font-semibold text-xl text-primary mb-2">
-                    {dish.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {dish.description || "Delicious dish from your menu"}
-                  </p>
-                </div>
+                      </>
+                    )}
+                  </div>
+                )}
                 
-                <div className="flex items-center justify-center pt-4">
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    onClick={() => handleShare(dish.name)}
-                    className="w-full"
-                  >
-                    <Share2 className="h-4 w-4" />
-                    Share Dish
-                  </Button>
-                </div>
+                <h3 className="font-semibold text-xl text-primary mb-2">
+                  {dish.name}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {dish.description || "Delicious dish from your menu"}
+                </p>
               </div>
-            </Card>
-          ))}
-        </div>
-      )}
+              
+              <div className="flex items-center justify-center pt-4">
+                <Button
+                  variant="hero"
+                  size="sm"
+                  onClick={() => handleShare(dish.name)}
+                  className="w-full"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Share Dish
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
