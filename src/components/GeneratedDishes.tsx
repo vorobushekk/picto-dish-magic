@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 interface GeneratedDish {
   name: string;
   description: string;
+  price?: string;
   imageUrl?: string;
   isGeneratingImage?: boolean;
 }
@@ -118,6 +119,11 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                 <h3 className="font-semibold text-xl text-primary mb-2">
                   {dish.name}
                 </h3>
+                {dish.price && (
+                  <div className="text-lg font-bold text-accent mb-2">
+                    {dish.price}
+                  </div>
+                )}
                 <p className="text-muted-foreground text-sm">
                   {dish.description || "Delicious dish from your menu"}
                 </p>
