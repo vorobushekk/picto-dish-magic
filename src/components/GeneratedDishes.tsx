@@ -65,7 +65,7 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
         {dishes.map((dish, index) => (
           <Card 
             key={`${dish.name}-${index}`} 
-            className={`border border-border/50 bg-card hover:border-border transition-all duration-300 hover:shadow-lg group overflow-hidden ${
+            className={`gradient-card border border-border/30 hover:border-border/50 transition-all duration-300 hover:shadow-lg group overflow-hidden ${
               dish.imageUrl ? 'animate-scale-in' : ''
             }`}
             style={{ 
@@ -123,13 +123,13 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                     <span className="truncate block">{dish.name}</span>
                   </h3>
                   {dish.price && (
-                    <div className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                    <div className="text-sm font-semibold text-accent-foreground whitespace-nowrap">
                       {dish.price}
                     </div>
                   )}
                 </div>
                 <div className="h-px bg-border/30 mb-3"></div>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-secondary-foreground text-sm leading-relaxed">
                   {dish.description || "Delicious dish from your menu"}
                 </p>
               </div>
