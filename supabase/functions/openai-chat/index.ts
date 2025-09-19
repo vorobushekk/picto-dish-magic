@@ -63,9 +63,9 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini-2025-08-07', // Vision-capable model
+        model: 'gpt-4o', // Vision-capable model
         messages: messages,
-        max_completion_tokens: 1000,
+        max_tokens: 1500, // Use max_tokens for gpt-4o
         response_format: { type: "json_object" } // Force JSON output
       }),
     });
@@ -84,9 +84,23 @@ serve(async (req) => {
 
     const data = await response.json();
     console.log('OpenAI response received successfully');
+    console.log('Token usage:', data.usage);
     
     const generatedText = data.choices[0].message.content;
     console.log('Raw OpenAI response:', generatedText);
+    
+    // Check for empty response
+    if (!generatedText || generatedText.trim() === '') {
+      console.error('Empty content from OpenAI. Full response:', JSON.stringify(data));
+      return new Response(JSON.stringify({ 
+        success: false,
+        error: 'OpenAI returned empty response',
+        provider_response: data
+      }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     // Clean the response by removing markdown code blocks if present
     let cleanedText = generatedText.trim();
