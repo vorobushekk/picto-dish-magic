@@ -116,14 +116,16 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                   </div>
                 )}
                 
-                <h3 className="font-semibold text-xl text-primary mb-2">
-                  {dish.name}
-                </h3>
-                {dish.price && (
-                  <div className="text-lg font-bold text-accent mb-2">
-                    {dish.price}
-                  </div>
-                )}
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold text-xl text-primary">
+                    {dish.name}
+                  </h3>
+                  {dish.price && (
+                    <div className="text-lg font-bold text-accent">
+                      {dish.price}
+                    </div>
+                  )}
+                </div>
                 <p className="text-muted-foreground text-sm">
                   {dish.description || "Delicious dish from your menu"}
                 </p>
