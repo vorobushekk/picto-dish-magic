@@ -120,7 +120,7 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
               <div>
                 <div className="flex justify-between items-start gap-3 mb-3">
                   <h3 className="font-medium text-lg text-foreground leading-tight flex-1 min-w-0">
-                    <span className="truncate block">{dish.name}</span>
+                    <span className="line-clamp-2">{dish.name}</span>
                   </h3>
                   {dish.price && (
                     <div className="text-sm font-semibold text-foreground whitespace-nowrap">
