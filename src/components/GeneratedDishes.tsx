@@ -24,10 +24,10 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
-          <Card key={i} className="gradient-card shadow-card">
-            <div className="p-6 space-y-4">
-              <div className="aspect-square bg-muted rounded-lg animate-pulse" />
-              <div className="space-y-2">
+          <Card key={i} className="border border-border/50 bg-card">
+            <div className="p-4 space-y-4">
+              <div className="aspect-square bg-muted rounded-md animate-pulse" />
+              <div className="space-y-3">
                 <div className="h-4 bg-muted rounded animate-pulse" />
                 <div className="h-3 bg-muted rounded w-2/3 animate-pulse" />
               </div>
@@ -41,7 +41,7 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
   if (dishes.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="gradient-card rounded-xl p-8 shadow-card">
+        <div className="border border-border/30 rounded-xl p-8 bg-muted/20">
           <p className="text-muted-foreground text-lg">
             {placeholderText || 'Upload a menu and click "Add Pictures ✨" to see stunning dish visuals here!'}
           </p>
@@ -65,68 +65,71 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
         {dishes.map((dish, index) => (
           <Card 
             key={`${dish.name}-${index}`} 
-            className={`gradient-card shadow-card hover:shadow-primary transition-all duration-300 hover:scale-105 group overflow-hidden ${
+            className={`border border-border/50 bg-card hover:border-border transition-all duration-300 hover:shadow-lg group overflow-hidden ${
               dish.imageUrl ? 'animate-scale-in' : ''
             }`}
             style={{ 
               animationDelay: `${index * 0.1}s`,
-              opacity: dish.imageUrl ? 1 : 0.7
+              opacity: dish.imageUrl ? 1 : 0.85
             }}
           >
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-4">
               {/* Image Section */}
-              <div className="text-center">
+              <div className="relative">
                 {dish.imageUrl ? (
                   <div className="relative animate-scale-in">
                     <img
                       src={dish.imageUrl}
                       alt={dish.name}
-                      className="w-full aspect-square object-cover rounded-lg mb-4 shadow-lg"
+                      className="w-full aspect-square object-cover rounded-md mb-6"
                     />
-                    <div className="absolute bottom-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-fade-in">
-                      ✨ Ready!
+                    <div className="absolute top-2 right-2 bg-green-500/90 text-white text-xs px-2 py-0.5 rounded-full animate-fade-in">
+                      ✨ Ready
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full aspect-square bg-muted rounded-lg mb-4 flex flex-col items-center justify-center relative">
+                  <div className="w-full aspect-square bg-muted/50 rounded-md mb-6 flex flex-col items-center justify-center relative">
                     {dish.isGeneratingImage ? (
                       <>
                         <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mb-2" />
                         <span className="text-sm text-muted-foreground animate-pulse">Creating magic...</span>
-                        <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                        <div className="absolute top-2 right-2 bg-blue-500/90 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">
                           🎨 Generating
                         </div>
                       </>
                     ) : (
                       <>
-                        <span className="text-4xl mb-2">🍽️</span>
+                        <span className="text-4xl mb-2 opacity-40">🍽️</span>
                         {onGenerateImage && (
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => onGenerateImage(index)}
-                            className="mt-2 hover-scale"
+                            className="mt-2 text-xs"
                           >
-                            <Camera className="h-4 w-4 mr-2" />
-                            Generate Image
+                            <Camera className="h-3 w-3 mr-1" />
+                            Generate
                           </Button>
                         )}
                       </>
                     )}
                   </div>
                 )}
-                
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold text-xl text-primary">
-                    {dish.name}
+              </div>
+              
+              <div>
+                <div className="flex justify-between items-start gap-3 mb-3">
+                  <h3 className="font-medium text-lg text-foreground leading-tight flex-1 min-w-0">
+                    <span className="truncate block">{dish.name}</span>
                   </h3>
                   {dish.price && (
-                    <div className="text-lg font-bold text-accent">
+                    <div className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
                       {dish.price}
                     </div>
                   )}
                 </div>
-                <p className="text-muted-foreground text-sm">
+                <div className="h-px bg-border/30 mb-3"></div>
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {dish.description || "Delicious dish from your menu"}
                 </p>
               </div>
