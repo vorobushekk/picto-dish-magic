@@ -128,7 +128,34 @@ const Index = () => {
 
       const optimizedImage = await resizeImage(uploadedFile);
       
-      const prompt = `Analyze this restaurant menu image and extract all dish information. For each dish, identify the name and description. Return the data as a JSON array with objects containing 'name' and 'description' fields. Focus only on actual food items, ignore prices, categories, and restaurant info. If a dish has no description, use an empty string.`;
+      const prompt = `Analyze this restaurant menu image and extract all dish information systematically.
+
+EXTRACT FOR EACH DISH:
+1. NAME: Exact dish name as written (preserve original text)
+2. DESCRIPTION: Brief description or ingredients listed
+3. PRICE: Price with currency symbol if clearly visible, otherwise empty string
+
+FORMATTING REQUIREMENTS:
+- Use ONLY straight quotes (") in JSON - never smart quotes
+- Keep descriptions concise and clear
+- Extract prices as strings with currency symbols when visible
+- Use empty strings for missing information
+
+FOCUS ON:
+- Actual food/drink items only
+- Clear, readable dish names
+- Ingredient lists or brief descriptions
+- Visible pricing information
+
+IGNORE:
+- Restaurant name/branding
+- Category headers
+- Contact information
+- Promotional text
+- Hours/policies
+
+Return JSON matching this exact structure:
+{"success": true, "dishes": [{"name": "dish name", "description": "description", "price": "price or empty"}]}`;
 
       try {
         const response = await fetch('https://mbrrizfxlihigzyxqazu.supabase.co/functions/v1/openai-chat', {

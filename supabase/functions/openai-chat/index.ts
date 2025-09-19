@@ -33,7 +33,32 @@ serve(async (req) => {
     const messages = [
       { 
         role: 'system', 
-        content: 'You are a menu analysis expert. Return ONLY strict, valid JSON matching exactly: {"success": true, "dishes": [{"name": "dish name", "description": "description or empty string"}]}. Rules: - Use double quotes for all JSON strings. - Escape any inner double quotes with a backslash. - No markdown, code fences, comments, or trailing commas. - Do not add extra fields or text.'
+        content: `You are a menu analysis expert. Extract dish information and return ONLY valid JSON.
+
+CRITICAL JSON FORMATTING RULES:
+- Use ONLY straight double quotes (") - NEVER use smart quotes (", ", ', ')
+- Use UTF-8 encoding - no special characters that break JSON
+- For quotes within text, use \\" (escaped double quotes)
+- No trailing commas, no markdown, no code blocks, no extra text
+
+REQUIRED JSON FORMAT (copy this structure exactly):
+{"success": true, "dishes": [{"name": "Dish Name", "description": "Brief description", "price": ""}]}
+
+EXTRACTION RULES:
+- Extract dish names exactly as written (use straight quotes for any quotes in names)
+- For descriptions: keep brief, remove redundant words, use straight quotes only
+- For prices: extract as string with currency symbol if visible, otherwise use empty string ""
+- Ignore: restaurant info, categories, headers, footers, contact details
+- If description is unclear/missing, use empty string ""
+
+EXAMPLES OF CORRECT OUTPUT:
+{"success": true, "dishes": [
+  {"name": "Kaya French Toast", "description": "Pandan-Coconut Jam, Soy Caramel, Egg Jam", "price": "$18"},
+  {"name": "Chef's Special \\"Signature\\" Pasta", "description": "House-made pasta with seasonal ingredients", "price": ""},
+  {"name": "Wagyu Burger", "description": "Premium beef patty with truffle fries", "price": "$32"}
+]}
+
+Remember: Use ONLY straight quotes (") and proper escaping (\\")`
       }
     ];
 
