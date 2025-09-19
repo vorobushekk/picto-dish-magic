@@ -37,10 +37,10 @@ serve(async (req) => {
     }
 
     // Validate required fields for image generation
-    if (!body.name || !body.description) {
+    if (!body.name) {
       return new Response(
         JSON.stringify({ 
-          error: "Missing required fields: name and description are required" 
+          error: "Missing required field: name is required" 
         }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 400,
@@ -88,6 +88,7 @@ serve(async (req) => {
       success: true,
       name: body.name,
       description: body.description,
+      price: body.price,
       imageUrl: Array.isArray(output) ? output[0] : output,
       prompt: foodPrompt
     }), {

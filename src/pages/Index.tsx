@@ -9,6 +9,7 @@ import heroImage from '@/assets/hero-food.jpg';
 interface GeneratedDish {
   name: string;
   description: string;
+  price?: string;
   imageUrl?: string;
   isGeneratingImage?: boolean;
 }
@@ -224,7 +225,8 @@ Return JSON matching this exact structure:
             },
             body: JSON.stringify({ 
               name: dish.name,
-              description: dish.description || 'Delicious dish'
+              description: dish.description || 'Delicious dish',
+              price: dish.price
             }),
           });
 
@@ -304,7 +306,8 @@ Return JSON matching this exact structure:
             },
             body: JSON.stringify({ 
               name: dish.name,
-              description: dish.description || 'Delicious dish'
+              description: dish.description || 'Delicious dish',
+              price: dish.price
             }),
           });
 
@@ -355,7 +358,8 @@ Return JSON matching this exact structure:
         },
         body: JSON.stringify({ 
           name: dish.name,
-          description: dish.description || 'Delicious dish'
+          description: dish.description || 'Delicious dish',
+          price: dish.price
         }),
       });
 
