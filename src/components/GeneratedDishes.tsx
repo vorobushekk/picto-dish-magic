@@ -123,13 +123,13 @@ export const GeneratedDishes: React.FC<GeneratedDishesProps> = ({ dishes, isLoad
                     <span className="truncate block">{dish.name}</span>
                   </h3>
                   {dish.price && (
-                    <div className="text-sm font-semibold text-accent-foreground whitespace-nowrap">
+                    <div className="text-sm font-semibold text-foreground whitespace-nowrap">
                       {dish.price}
                     </div>
                   )}
                 </div>
                 <div className="h-px bg-border/30 mb-3"></div>
-                <p className="text-secondary-foreground text-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {dish.description || "Delicious dish from your menu"}
                 </p>
               </div>
