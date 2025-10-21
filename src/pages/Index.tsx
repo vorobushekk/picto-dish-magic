@@ -246,14 +246,14 @@ Return JSON matching this exact structure:
           
           updatedDishes[index].isGeneratingImage = false;
           setGeneratedDishes([...updatedDishes]);
-          toast.error(`Failed to generate image for ${dish.name}`);
+          toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
           return { success: false, dish: dish.name };
           
         } catch (error) {
           console.error(`Error generating image for ${dish.name}:`, error);
           updatedDishes[index].isGeneratingImage = false;
           setGeneratedDishes([...updatedDishes]);
-          toast.error(t.failed_generate(dish.name));
+          toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
           return { success: false, dish: dish.name };
         }
       });
@@ -317,14 +317,14 @@ Return JSON matching this exact structure:
               updatedDishes[i].imageUrl = data.imageUrl;
               toast.success(`✨ Generated image for ${dish.name}!`);
             } else {
-          toast.error(t.failed_generate(dish.name));
+              toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
             }
           } else {
-            toast.error(`Failed to generate image for ${dish.name}`);
+            toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
           }
         } catch (error) {
           console.error(`Error generating image for ${dish.name}:`, error);
-          toast.error(`Failed to generate image for ${dish.name}`);
+          toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
         }
         
         updatedDishes[i].isGeneratingImage = false;
@@ -369,14 +369,14 @@ Return JSON matching this exact structure:
           updatedDishes[dishIndex].imageUrl = data.imageUrl;
           toast.success(`✨ Generated image for ${dish.name}!`);
         } else {
-          toast.error(`Failed to generate image for ${dish.name}`);
+          toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
         }
       } else {
-        toast.error(`Failed to generate image for ${dish.name}`);
+        toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
       }
     } catch (error) {
       console.error(`Error generating image for ${dish.name}:`, error);
-      toast.error(`Failed to generate image for ${dish.name}`);
+      toast.error('⚠️ Due to recent AWS shutdown, we are working to restore the service. Thank you for your patience.');
     }
 
     updatedDishes[dishIndex].isGeneratingImage = false;
